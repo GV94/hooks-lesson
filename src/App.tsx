@@ -4,5 +4,5 @@ import styled from "styled-components";
 const Container = styled.div``;
 
 export const App: FC = () => {
-  return <Container>React Boilerplate</Container>;
+  return <Container>Hooks Lessons 🎣</Container>;
 };
