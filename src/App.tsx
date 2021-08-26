@@ -10,7 +10,7 @@ import styled from "styled-components";
     - Basic: useState, useContext, useEffect
     - additional: useLayoutEffect, useReducer, useMemo, useCallback, useRef, useImperativeHandle, useDebugValue
   * Custom Hooks
-  * Excersices
+  * Exersices
     - Make a hook that returns a component that has a button you can press to increase a counter, and show/hide an element in the component that uses the hook if the counter > 5
     - Make a hook that makes a request to a given url and returns the data, any errors and a way to make that request again
     - Make a hook that tells you what device the current screen size is for (mobile, tablet or desktop)
