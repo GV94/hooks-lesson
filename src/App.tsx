@@ -11,7 +11,7 @@ import styled from "styled-components";
     - additional: useLayoutEffect, useReducer, useMemo, useCallback, useRef, useImperativeHandle, useDebugValue
   * Custom Hooks
   * Excersices
-    - Make a hook that returns a component that has a button you can press to increase a counter and also displays they current value of the counter
+    - Make a hook that returns a component that has a button you can press to increase a counter, and show/hide an element in the component that uses the hook if the counter > 5
     - Make a hook that makes a request to a given url and returns the data, any errors and a way to make that request again
     - Make a hook that tells you what device the current screen size is for (mobile, tablet or desktop)
 
@@ -25,5 +25,9 @@ import styled from "styled-components";
 const Container = styled.div``;
 
 export const App: FC = () => {
-  return <Container>Hooks Lessons 🎣</Container>;
+  return (
+    <Container>
+      <h1> Hooks Lessons 🎣</h1>
+    </Container>
+  );
 };
