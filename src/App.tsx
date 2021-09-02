@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import styled from "styled-components";
 
 /* 
@@ -24,10 +24,132 @@ import styled from "styled-components";
 
 const Container = styled.div``;
 
+const ExerciseTitle = styled.h2`
+  font-family: 'Helvetica';
+  margin-top: 3rem;
+`;
+
+// Exercise 1
+const UglyButton = styled.button``;
+
+const useIncreaseCounter = () => {
+  const [counter, setCounter] = useState<number>(0)
+
+  const CounterComponent: FC = () => {
+    const handleCounterButtonClick = () => {
+      setCounter(counter+1)
+    }
+    return(
+      <div>
+        <UglyButton onClick={handleCounterButtonClick}>Increase counter</UglyButton>
+        {counter > 5 && (
+          <p>{counter}</p>
+        )}
+      </div>
+    )
+  }
+  
+  return { counter, CounterComponent}
+}
+
+
+
+// Exercise 2
+interface DataObject {
+  title: string
+  first: string
+  last: string
+}
+
+const useGetData = () => {
+  const [fakeUser, setFakeUser] = useState<DataObject | null>(null)
+  const [hasError, setHasError] = useState<boolean>(false)
+  const url = 'https://randomuser.me/api/'
+
+  const fetchData = async () => {
+    fetch(`${url}`)
+    .then((res) => res.json())
+    .then((data) => {
+      const user = data.results[0].name
+      setHasError(false)
+      setFakeUser(user)
+    })
+    .catch((error) => {
+      console.log(error)
+      setHasError(true)
+    })
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [hasError, setFakeUser])
+
+  return { fakeUser, hasError} ;
+}
+
+
+
+// Exercise 3
+const useGetDevice = () => {
+  const [device, setDevice] = useState<string | null>(null);
+  // Used breakpoints listed in here https://www.freecodecamp.org/news/css-media-queries-breakpoints-media-types-standard-resolutions-and-more/
+  const mobileBreakpoint = 480;
+  const tabletBreakpoint = 768;
+
+  const setDeviceBasedOnInnerWidth = () => {
+    if(window.innerWidth <= mobileBreakpoint) {
+      setDevice('mobile')
+    } else if (window.innerWidth <= tabletBreakpoint){
+      setDevice('tablet')
+    } else {
+      setDevice('desktop')
+    }
+  }
+
+  useEffect(() => {
+    setDeviceBasedOnInnerWidth()
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      setDeviceBasedOnInnerWidth()
+    });
+  })
+
+  return device;
+}
+
 export const App: FC = () => {
+  // Exercise 1
+  const { CounterComponent } = useIncreaseCounter()
+
+  // Exercise 2
+  const { fakeUser, hasError } = useGetData()
+  
+  // Exercise 3
+  const device = useGetDevice();
+  
   return (
     <Container>
       <h1> Hooks Lessons 🎣</h1>
+
+
+      <ExerciseTitle>Exercise 1</ExerciseTitle>
+      <CounterComponent/>
+
+     
+      <ExerciseTitle>Exercise 2</ExerciseTitle>
+      {fakeUser && (
+        <p>{fakeUser.title} {fakeUser.first} {fakeUser.last}</p>
+      )}
+      
+      {hasError && (
+          <p>There was a problem loading the user.</p>
+      )}
+        
+    
+      <ExerciseTitle>Exercise 3</ExerciseTitle>
+      <p>Your screen size is for {device}</p>
     </Container>
   );
 };
