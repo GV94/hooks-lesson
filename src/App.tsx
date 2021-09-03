@@ -29,6 +29,21 @@ const ExerciseTitle = styled.h2`
   margin-top: 3rem;
 `;
 
+const Form = styled.form`
+display: flex;
+flex-direction: column;
+width: 30%;
+
+& label {
+  margin-bottom: 0.5rem;
+}
+
+& input {
+  margin-bottom: 1rem;
+  min-width: 200px;
+}
+`;
+
 // Exercise 1
 const UglyButton = styled.button``;
 
@@ -62,17 +77,22 @@ interface DataObject {
 }
 
 const useGetData = () => {
-  const [fakeUser, setFakeUser] = useState<DataObject | null>(null)
+  const [url, setUrl] = useState<string | undefined>(undefined)
+  const [data, setData] = useState<DataObject | null>(null)
   const [hasError, setHasError] = useState<boolean>(false)
-  const url = 'https://randomuser.me/api/'
 
-  const fetchData = async () => {
+  const setUrlValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUrl(e.currentTarget.value)
+  }
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement> ) => {
+    e.preventDefault()
     fetch(`${url}`)
     .then((res) => res.json())
     .then((data) => {
       const user = data.results[0].name
       setHasError(false)
-      setFakeUser(user)
+      setData(user)
     })
     .catch((error) => {
       console.log(error)
@@ -80,12 +100,8 @@ const useGetData = () => {
     })
   }
 
-  useEffect(() => {
-    fetchData()
-  }, [hasError, setFakeUser])
-
-  return { fakeUser, hasError} ;
-}
+  return { handleSubmit, setUrlValue, data, hasError} ;
+} 
 
 
 
@@ -108,15 +124,19 @@ const useGetDevice = () => {
 
   useEffect(() => {
     setDeviceBasedOnInnerWidth()
-  }, [])
 
-  useEffect(() => {
     window.addEventListener('resize', () => {
       setDeviceBasedOnInnerWidth()
     });
-  })
 
-  return device;
+    return(() => {
+      window.removeEventListener('resize', ()=> {
+        setDeviceBasedOnInnerWidth()
+      }) 
+    })
+  }, [])
+
+  return { device };
 }
 
 export const App: FC = () => {
@@ -124,10 +144,11 @@ export const App: FC = () => {
   const { CounterComponent } = useIncreaseCounter()
 
   // Exercise 2
-  const { fakeUser, hasError } = useGetData()
+  // https://randomuser.me/api/
+  const { handleSubmit, setUrlValue, data, hasError } = useGetData()
   
   // Exercise 3
-  const device = useGetDevice();
+  const { device } = useGetDevice();
   
   return (
     <Container>
@@ -139,12 +160,18 @@ export const App: FC = () => {
 
      
       <ExerciseTitle>Exercise 2</ExerciseTitle>
-      {fakeUser && (
-        <p>{fakeUser.title} {fakeUser.first} {fakeUser.last}</p>
+      <Form onSubmit={handleSubmit}>
+        <label htmlFor="apiUrl" >Insert API url</label>
+        <input id="apiUrl" name="apiUrl" type="text" onChange={setUrlValue} />
+        <button type="submit">Fetch my url</button>
+      </Form>
+
+      {data && !hasError && (
+        <p>Data fetched successfully</p>
       )}
       
       {hasError && (
-          <p>There was a problem loading the user.</p>
+        <p>There was a problem fetching the data.</p>
       )}
         
     
